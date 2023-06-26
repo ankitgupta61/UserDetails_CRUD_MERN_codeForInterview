@@ -1,6 +1,7 @@
 import { FormGroup, InputLabel, Input, FormControl, Button, styled } from "@mui/material";
 import { useState } from 'react';
 import { postData } from "../service/api"
+import { useNavigate } from "react-router-dom";
 
 const Container = styled(FormGroup)`
     width : 50%;
@@ -18,21 +19,29 @@ const initialUserData = {
 }
 
 const AddUsers = () =>{
+    const navigate = useNavigate();
     const [ userData, setUserData] = useState(initialUserData);
     const changeHandler = (e) =>{
-        // console.log(e.target.name, e.target.value);
         setUserData({...userData,[e.target.name] : e.target.value});
-        // console.log(userData);
     }
     const addUserDetails = () =>{
-        console.log(userData);
-        postData(userData);
+        if(userData.name !== "" && userData.phoneNumber.length === 10 && userData.email.includes('@')){
+            postData(userData);
+            navigate('/all');
+        }else if(userData.name === ""){
+            alert('name can not be empty');
+        }
+        else if(! userData.email.includes('@')){
+            alert('invalid email');
+        }else{
+            alert('phone number should be of length 10');
+        }
     }
     return (
         <Container>
             <FormControl>
-                <InputLabel>Name</InputLabel>
-                <Input onChange={(e)=>{changeHandler(e)}} name="name" />
+                <InputLabel htmlFor="name-input">Name</InputLabel>
+                <Input id="name-input" onChange={(e)=>{changeHandler(e)}} required name="name" />
             </FormControl>
             <FormControl>
                 <InputLabel>UserName</InputLabel>
